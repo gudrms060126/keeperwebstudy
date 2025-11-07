@@ -1,4 +1,3 @@
-# keeperwebstudy
 <!doctype html>
 <html lang="ko">
 <head>
