@@ -4,211 +4,604 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Train Note</title>
-  <style>
-    :root{
-      --bg:#f7f8fc;--card:#fff;--text:#101828;--muted:#667085;
-      --accent:#2563eb;--accent-weak:rgba(37,99,235,.12);
-      --border:#e5e7eb;--radius:14px;--shadow:0 8px 24px rgba(16,24,40,.08);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);
-      font-family:Inter,Pretendard,-apple-system,"Segoe UI",Roboto,"Noto Sans KR",sans-serif}
-    .container{max-width:980px;margin:28px auto;padding:0 20px}
-    header{text-align:center;margin-bottom:20px}
-    h1{margin:0;font-size:1.6rem}
-    .muted{color:var(--muted);font-size:.95rem}
-    .layout{display:grid;grid-template-columns:1fr;gap:14px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-      box-shadow:var(--shadow);padding:16px}
-    .card h3{margin:4px 0 8px 0}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{padding:8px 12px;border-radius:999px;border:1px solid var(--border);
-      background:#fff;cursor:pointer;user-select:none}
-    .chip.active{background:var(--accent-weak);border-color:var(--accent);color:var(--accent);font-weight:600}
-    .grid{display:grid;gap:12px}
-    .cols-2{grid-template-columns:1fr 1fr}
-    @media(max-width:700px){.cols-2{grid-template-columns:1fr}}
-    label.small{display:block;font-size:.9rem;color:var(--muted);margin-bottom:6px}
-    input,textarea,select{width:100%;padding:10px 12px;border:1px solid var(--border);
-      border-radius:10px;background:#fff;font:inherit;color:inherit}
-    textarea{min-height:80px;resize:vertical}
-    .btn{padding:10px 14px;border-radius:10px;border:1px solid var(--border);
-      background:var(--accent);color:#fff;cursor:pointer;font-weight:600}
-    .entry{border-top:1px dashed var(--border);padding:10px 0}
-    .entry:first-child{border-top:0}
-    .date-block{border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0;background:#fff}
-    .date-title{font-weight:700;margin-bottom:6px}
-    .subhead{font-weight:600;margin-top:6px}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    footer{margin-top:20px;text-align:center;color:var(--muted);font-size:.9rem}
-  </style>
+  <!-- 외부 CSS -->
+  <link rel="stylesheet" href="main.css">
 </head>
 <body>
-  <div class="container">
+  <!-- 로그인 / 회원가입 화면 -->
+  <div id="auth" class="container">
     <header>
       <h1>Train Note</h1>
-      <div class="muted">오늘의 운동과 식단을 간단하게 기록하세요.</div>
+      <div class="muted">먼저 회원가입 또는 로그인 후 사용해 주세요.</div>
     </header>
 
-    <main class="layout">
-      <!-- 운동 부위 -->
-      <section class="card">
-        <h3>운동 부위 선택</h3>
-        <p class="muted">오늘은 어디를 운동했나요? (중복 선택 가능)</p>
-        <div class="chips" id="bodyChips"></div>
-      </section>
-
-      <!-- 운동 기록 -->
-      <section class="card">
-        <h3>운동 기록 추가</h3>
-        <div class="grid cols-2">
+    <main class="layout" style="max-width:760px;margin:0 auto;grid-template-columns:1fr;">
+      <section class="card" style="max-width:420px;margin:0 auto;">
+        <h3>로그인</h3>
+        <div class="grid" style="margin-bottom:8px">
           <div>
-            <label class="small">날짜</label>
-            <input type="date" id="exerciseDate">
+            <label class="small">아이디</label>
+            <input id="loginUsername" placeholder="아이디를 입력하세요">
           </div>
           <div>
-            <label class="small">운동 이름</label>
-            <input id="exerciseName" placeholder="예: 스쿼트, 벤치프레스">
+            <label class="small">비밀번호</label>
+            <input id="loginPassword" type="password" placeholder="비밀번호를 입력하세요">
           </div>
         </div>
-        <div style="margin-top:10px">
-          <label class="small">메모</label>
-          <textarea id="exerciseMemo" placeholder="예: 3세트 × 10회, 80kg"></textarea>
+        <div style="text-align:right;margin-bottom:12px">
+          <button class="btn" id="doLogin" type="button">로그인</button>
         </div>
-        <div style="text-align:right;margin-top:10px">
-          <button class="btn" id="addExercise">운동 추가</button>
-        </div>
-      </section>
 
-      <section class="card">
-        <h3>운동 로그</h3>
-        <div id="exerciseList" class="muted">아직 기록이 없습니다.</div>
-      </section>
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:10px 0">
 
-      <!-- 식단 기록 -->
-      <section class="card">
-        <h3>식단 기록 추가</h3>
-        <div class="grid cols-2">
+        <h3>회원가입</h3>
+        <div class="grid">
           <div>
-            <label class="small">날짜</label>
-            <input type="date" id="dietDate">
+            <label class="small">아이디</label>
+            <input id="signupUsername" placeholder="사용할 아이디">
           </div>
           <div>
-            <label class="small">식사 유형</label>
-            <select id="mealType">
-              <option value="아침">아침</option>
-              <option value="점심">점심</option>
-              <option value="저녁">저녁</option>
-              <option value="간식">간식</option>
-            </select>
+            <label class="small">비밀번호</label>
+            <input id="signupPassword" type="password" placeholder="비밀번호">
+          </div>
+          <div>
+            <label class="small">비밀번호 확인</label>
+            <input id="signupPassword2" type="password" placeholder="비밀번호 확인">
           </div>
         </div>
-        <div style="margin-top:10px">
-          <label class="small">메뉴 / 칼로리 메모</label>
-          <textarea id="dietMemo" placeholder="예: 닭가슴살 150g, 샐러드 350kcal"></textarea>
+        <div style="text-align:right;margin-top:8px">
+          <button class="btn" id="doSignup" type="button">회원가입</button>
         </div>
-        <div style="text-align:right;margin-top:10px">
-          <button class="btn" id="addDiet">식단 추가</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <h3>식단 로그</h3>
-        <div id="dietList" class="muted">아직 기록이 없습니다.</div>
-      </section>
-
-      <!-- 전체 로그 (월별 필터 + 날짜별 묶음) -->
-      <section class="card">
-        <h3>전체 로그</h3>
-        <div class="row" style="margin-bottom:10px">
-          <label for="monthFilter" class="small" style="margin:0">월 선택</label>
-          <input type="month" id="monthFilter" />
-          <button class="btn" id="applyMonth">보기</button>
-          <div class="muted" id="monthHint"></div>
-        </div>
-        <div id="combinedList" class="muted">아직 기록이 없습니다.</div>
+        <p class="muted" style="margin-top:10px;font-size:.8rem">
+          ※ 실제 서버가 없는 연습용 로그인입니다. 
+        </p>
       </section>
     </main>
+  </div>
 
-    <footer>새로고침 시 데이터는 사라짐</footer>
+  <!-- 실제 앱 화면 -->
+  <div id="app" style="display:none">
+    <div class="container">
+      <header class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:12px">
+        <div>
+          <h1>Train Note</h1>
+          <div class="muted">오늘의 운동과 식단을 간단하게 기록하세요.</div>
+        </div>
+        <div class="row">
+          <span class="muted" id="welcomeUser" style="font-size:.8rem;margin-right:4px"></span>
+          <button class="btn small" id="btnLogout" type="button">로그아웃</button>
+        </div>
+      </header>
+
+      <main class="layout" id="layout">
+        <!-- 보기 선택 + 이번 주 요약 -->
+        <section class="card" id="sectionSummary">
+          <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:4px">
+            <h3 style="margin:0">이번 주 요약</h3>
+            <div class="row">
+              <button class="btn small btn-toggle" id="btnViewAll" type="button">전체 보기</button>
+              <button class="btn small btn-toggle active" id="btnViewExercise" type="button">운동만 보기</button>
+              <button class="btn small btn-toggle" id="btnViewDiet" type="button">식단만 보기</button>
+            </div>
+          </div>
+
+          <!-- 주간 목표 설정 -->
+          <div class="grid cols-2" style="margin-top:4px">
+            <div>
+              <label class="small">이번 주 목표 운동일</label>
+              <input type="number" id="weekGoal" placeholder="예: 4" min="0" max="7">
+            </div>
+            <div class="grid cols-3">
+              <div>
+                <label class="small">단백질 (g/일 계획)</label>
+                <input type="number" id="proteinTarget" placeholder="예: 130">
+              </div>
+              <div>
+                <label class="small">지방 (g/일 계획)</label>
+                <input type="number" id="fatTarget" placeholder="예: 60">
+              </div>
+              <div>
+                <label class="small">탄수화물 (g/일 계획)</label>
+                <input type="number" id="carbTarget" placeholder="예: 200">
+              </div>
+            </div>
+          </div>
+
+          <div id="todaySummary" style="margin-top:6px"></div>
+
+          <div class="progress-wrap">
+            <div class="subhead" style="margin-top:4px;font-size:.8rem">이번 주 운동 진행률</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="weekExerciseFill"></div>
+            </div>
+            <div class="meta" id="weekExerciseText" style="margin-top:2px"></div>
+            <div class="meta" id="weekSummary" style="margin-top:2px"></div>
+          </div>
+        </section>
+
+        <!-- 운동 기록 추가 (부위 선택 포함) -->
+        <section class="card" id="sectionExerciseForm">
+          <h3>운동 기록 추가</h3>
+          <p class="muted" style="margin:0 0 6px 0;font-size:.8rem">오늘은 어디를 운동했나요? (중복 선택 가능)</p>
+          <div class="chips" id="bodyChips" style="margin-bottom:6px"></div>
+
+          <div class="grid cols-2" style="margin-top:4px">
+            <div>
+              <label class="small">날짜</label>
+              <input type="date" id="exerciseDate">
+            </div>
+            <div>
+              <label class="small">운동 이름</label>
+              <input id="exerciseName" placeholder="예: 스쿼트, 벤치프레스">
+            </div>
+          </div>
+          <div style="margin-top:6px">
+            <label class="small">메모</label>
+            <textarea id="exerciseMemo" placeholder="예: 3세트 × 10회, 80kg"></textarea>
+          </div>
+          <div style="text-align:right;margin-top:6px">
+            <button class="btn" id="addExercise" type="button">운동 추가</button>
+          </div>
+        </section>
+
+        <!-- 달력 -->
+        <section class="card" id="sectionCalendar">
+          <h3>달력</h3>
+          <div class="row" style="margin-top:4px">
+            <div>
+              <label class="small" for="calendarMonth" style="margin:0">월 선택</label>
+              <input type="month" id="calendarMonth" />
+            </div>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </section>
+
+        <!-- 운동 로그 -->
+        <section class="card" id="sectionExerciseLog">
+          <h3>운동 로그</h3>
+          <div id="exerciseList" class="muted" style="font-size:.85rem">아직 기록이 없습니다.</div>
+        </section>
+
+        <!-- 전체 통합 로그 -->
+        <section class="card" id="sectionCombinedLog">
+          <h3>전체 통합 로그</h3>
+          <div class="row" style="margin-bottom:6px">
+            <div>
+              <label class="small" for="monthFilter" style="margin:0">월 선택</label>
+              <input type="month" id="monthFilter" />
+            </div>
+            <div>
+              <label class="small" for="weekFilter" style="margin:0">주차</label>
+              <select id="weekFilter">
+                <option value="0">전체</option>
+                <option value="1">1주차</option>
+                <option value="2">2주차</option>
+                <option value="3">3주차</option>
+                <option value="4">4주차</option>
+                <option value="5">5주차</option>
+              </select>
+            </div>
+            <button class="btn small" id="applyRange" type="button">보기</button>
+          </div>
+          <div class="muted" id="monthHint" style="font-size:.8rem"></div>
+          <div id="combinedList" class="muted" style="margin-top:6px;font-size:.85rem">아직 기록이 없습니다.</div>
+        </section>
+
+        <!-- 식단 기록 추가 -->
+        <section class="card" id="sectionDietForm">
+          <h3>식단 기록 추가</h3>
+          <div class="grid cols-2">
+            <div>
+              <label class="small">날짜</label>
+              <input type="date" id="dietDate">
+            </div>
+            <div>
+              <label class="small">식사 유형</label>
+              <select id="mealType">
+                <option value="아침">아침</option>
+                <option value="점심">점심</option>
+                <option value="저녁">저녁</option>
+                <option value="간식">간식</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:6px">
+            <label class="small">메뉴 / 칼로리 메모</label>
+            <textarea id="dietMemo" placeholder="예: 닭가슴살 150g, 샐러드 350kcal"></textarea>
+          </div>
+          <div style="text-align:right;margin-top:6px">
+            <button class="btn" id="addDiet" type="button">식단 추가</button>
+          </div>
+        </section>
+
+        <!-- 식단 로그 -->
+        <section class="card" id="sectionDietLog">
+          <h3>식단 로그</h3>
+          <div id="dietList" class="muted" style="font-size:.85rem">아직 기록이 없습니다.</div>
+        </section>
+      </main>
+
+      <footer>새로고침 시 데이터는 사라짐 · 로그인 정보와 기록은 브라우저 localStorage에 저장됩니다</footer>
+    </div>
   </div>
 
   <script>
     const BODY_PARTS = ['등','가슴','하체','어깨','팔','복근','유산소','전신'];
-    const bodyChips = document.getElementById('bodyChips');
-    const exerciseDate = document.getElementById('exerciseDate');
-    const exerciseName = document.getElementById('exerciseName');
-    const exerciseMemo = document.getElementById('exerciseMemo');
-    const addExercise = document.getElementById('addExercise');
-    const exerciseList = document.getElementById('exerciseList');
-    const dietDate = document.getElementById('dietDate');
-    const mealType = document.getElementById('mealType');
-    const dietMemo = document.getElementById('dietMemo');
-    const addDiet = document.getElementById('addDiet');
-    const dietList = document.getElementById('dietList');
-    const combinedList = document.getElementById('combinedList');
-    const monthFilter = document.getElementById('monthFilter');
-    const applyMonth = document.getElementById('applyMonth');
-    const monthHint = document.getElementById('monthHint');
 
-    const today = new Date().toISOString().slice(0,10);
-    const thisMonth = new Date().toISOString().slice(0,7); // YYYY-MM
-    exerciseDate.value = today;
-    dietDate.value = today;
-    monthFilter.value = thisMonth;
-    monthHint.textContent = '선택된 월의 기록만 보여줍니다.';
-
-    for(let i=0;i<BODY_PARTS.length;i++){
-      const b=document.createElement('button');
-      b.type='button';
-      b.className='chip';
-      b.textContent=BODY_PARTS[i];
-      b.addEventListener('click',()=>b.classList.toggle('active'));
-      bodyChips.appendChild(b);
+    // HTML 이스케이프 (XSS 방지용)
+    function escapeHtml(str){
+      if(!str) return '';
+      return str.replace(/[&<>"']/g, c => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+      }[c]));
     }
 
-    const state={exercises:[],diets:[]};
+    // 로그인 실패 관리 (간단 브루트포스 방지)
+    function getLoginFailInfo(username){
+      const raw = localStorage.getItem('tn_login_fail_'+username);
+      if(!raw) return null;
+      try{
+        return JSON.parse(raw);
+      }catch(e){
+        return null;
+      }
+    }
+
+    function setLoginFailInfo(username, info){
+      localStorage.setItem('tn_login_fail_'+username, JSON.stringify(info));
+    }
+
+    function clearLoginFail(username){
+      localStorage.removeItem('tn_login_fail_'+username);
+    }
+
+    function registerLoginFail(username){
+      const now = Date.now();
+      const limitMs = 5*60*1000; // 5분
+      let info = getLoginFailInfo(username) || {count:0, last:0};
+      if(now - info.last > limitMs){
+        info = {count:0, last:0};
+      }
+      info.count++;
+      info.last = now;
+      setLoginFailInfo(username, info);
+      return info;
+    }
+
+    function isLoginLocked(username){
+      const info = getLoginFailInfo(username);
+      if(!info) return false;
+      const now = Date.now();
+      const limitMs = 5*60*1000;
+      return info.count >= 5 && (now - info.last) < limitMs;
+    }
+
+    // 로그인 관련 DOM
+    const authContainer     = document.getElementById('auth');
+    const appContainer      = document.getElementById('app');
+    const loginUsername     = document.getElementById('loginUsername');
+    const loginPassword     = document.getElementById('loginPassword');
+    const signupUsername    = document.getElementById('signupUsername');
+    const signupPassword    = document.getElementById('signupPassword');
+    const signupPassword2   = document.getElementById('signupPassword2');
+    const doLogin           = document.getElementById('doLogin');
+    const doSignup          = document.getElementById('doSignup');
+    const btnLogout         = document.getElementById('btnLogout');
+    const welcomeUser       = document.getElementById('welcomeUser');
+
+    // 앱 DOM
+    const layout            = document.getElementById('layout');
+    const bodyChips         = document.getElementById('bodyChips');
+    const exerciseDate      = document.getElementById('exerciseDate');
+    const exerciseName      = document.getElementById('exerciseName');
+    const exerciseMemo      = document.getElementById('exerciseMemo');
+    const addExercise       = document.getElementById('addExercise');
+    const exerciseList      = document.getElementById('exerciseList');
+
+    const dietDate          = document.getElementById('dietDate');
+    const mealType          = document.getElementById('mealType');
+    const dietMemo          = document.getElementById('dietMemo');
+    const addDiet           = document.getElementById('addDiet');
+    const dietList          = document.getElementById('dietList');
+
+    const combinedList      = document.getElementById('combinedList');
+    const monthFilter       = document.getElementById('monthFilter');
+    const weekFilter        = document.getElementById('weekFilter');
+    const applyRange        = document.getElementById('applyRange');
+    const monthHint         = document.getElementById('monthHint');
+
+    const calendarMonth     = document.getElementById('calendarMonth');
+    const calendarGrid      = document.getElementById('calendarGrid');
+
+    const sectionSummary    = document.getElementById('sectionSummary');
+    const sectionExerciseForm = document.getElementById('sectionExerciseForm');
+    const sectionCalendar   = document.getElementById('sectionCalendar');
+    const sectionExerciseLog= document.getElementById('sectionExerciseLog');
+    const sectionCombinedLog= document.getElementById('sectionCombinedLog');
+    const sectionDietForm   = document.getElementById('sectionDietForm');
+    const sectionDietLog    = document.getElementById('sectionDietLog');
+
+    const btnViewAll        = document.getElementById('btnViewAll');
+    const btnViewExercise   = document.getElementById('btnViewExercise');
+    const btnViewDiet       = document.getElementById('btnViewDiet');
+
+    const weekGoalInput     = document.getElementById('weekGoal');
+    const proteinTarget     = document.getElementById('proteinTarget');
+    const fatTarget         = document.getElementById('fatTarget');
+    const carbTarget        = document.getElementById('carbTarget');
+
+    const today     = new Date().toISOString().slice(0,10);
+    const thisMonth = new Date().toISOString().slice(0,7);
+
+    if(exerciseDate) exerciseDate.value = today;
+    if(dietDate)     dietDate.value     = today;
+    if(monthFilter)  monthFilter.value  = thisMonth;
+    if(calendarMonth)calendarMonth.value= thisMonth;
+    if(weekGoalInput)weekGoalInput.value = 4; // 기본 목표 4일
+
+    if(monthHint){
+      monthHint.textContent = '월을 선택하고, 주차를 선택하면 그 범위의 로그만 표시됩니다. (주차=전체면 한 달 전체)';
+    }
+
+    // 운동 부위 칩
+    if(bodyChips){
+      for(let i=0;i<BODY_PARTS.length;i++){
+        const b=document.createElement('button');
+        b.type='button';
+        b.className='chip';
+        b.textContent=BODY_PARTS[i];
+        b.addEventListener('click',()=>b.classList.toggle('active'));
+        bodyChips.appendChild(b);
+      }
+    }
+
+    // 유저/상태 관리 (localStorage)
+    let currentUser = null;
+    let state = {exercises:[],diets:[]};
+
+    function getUsers(){
+      const raw = localStorage.getItem('tn_users');
+      if(!raw) return {};
+      try{
+        return JSON.parse(raw);
+      }catch(e){
+        return {};
+      }
+    }
+
+    function setUsers(users){
+      localStorage.setItem('tn_users', JSON.stringify(users));
+    }
+
+    function saveState(){
+      if(!currentUser) return;
+      localStorage.setItem('tn_state_'+currentUser, JSON.stringify(state));
+    }
+
+    function loadState(){
+      if(!currentUser){
+        state = {exercises:[],diets:[]};
+      }else{
+        const raw = localStorage.getItem('tn_state_'+currentUser);
+        if(raw){
+          try{
+            state = JSON.parse(raw);
+          }catch(e){
+            state = {exercises:[],diets:[]};
+          }
+        }else{
+          state = {exercises:[],diets:[]};
+        }
+      }
+      renderExerciseList();
+      renderDietList();
+      renderCombined();
+      renderCalendar();
+      updateSummary();
+    }
+
+    function setCurrentUser(name){
+      currentUser = name;
+      if(name){
+        localStorage.setItem('tn_current_user', name);
+      }else{
+        localStorage.removeItem('tn_current_user');
+      }
+      updateLoginUI();
+    }
+
+    function updateLoginUI(){
+      if(currentUser){
+        authContainer.style.display = 'none';
+        appContainer.style.display  = 'block';
+        welcomeUser.textContent = currentUser + '님으로 로그인됨';
+        loadState();
+      }else{
+        appContainer.style.display  = 'none';
+        authContainer.style.display = 'block';
+        welcomeUser.textContent = '';
+        state = {exercises:[],diets:[]};
+      }
+    }
+
+    // 이번 주 요약 & 진행률
+    function updateSummary(){
+      const now = new Date();
+      const weekday = (now.getDay()+6)%7; // 월=0
+      const monday = new Date(now);
+      monday.setDate(now.getDate() - weekday);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate()+6);
+
+      function inWeek(dateStr){
+        const d = new Date(dateStr);
+        return d >= monday && d <= sunday;
+      }
+
+      const weekDates = new Set(
+        state.exercises.filter(e=>inWeek(e.date)).map(e=>e.date)
+      );
+      const weekExerciseDays = weekDates.size;
+
+      let weekGoal = parseInt(weekGoalInput.value,10);
+      if(isNaN(weekGoal) || weekGoal < 0) weekGoal = 0;
+
+      const p = parseInt(proteinTarget.value,10) || 0;
+      const f = parseInt(fatTarget.value,10) || 0;
+      const c = parseInt(carbTarget.value,10) || 0;
+
+      const todaySummary = document.getElementById('todaySummary');
+      const goalLabel = weekGoal
+        ? `목표 ${weekGoal}일 중 ${weekExerciseDays}일`
+        : `목표 미설정 (현재 ${weekExerciseDays}일 운동)`;
+
+      if(todaySummary){
+        todaySummary.innerHTML = `
+          <div class="summary-metrics">
+            <div class="summary-item">
+              <div class="summary-label">이번 주 운동일</div>
+              <div class="summary-value">${weekExerciseDays}일</div>
+              <div class="summary-sub">${goalLabel}</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">주간 식단 계획 (1일 기준)</div>
+              <div class="summary-sub">
+                단백질 ${p}g · 지방 ${f}g · 탄수화물 ${c}g
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      const percent = weekGoal > 0
+        ? Math.min(100, Math.round(weekExerciseDays / weekGoal * 100))
+        : 0;
+
+      const fillEl = document.getElementById('weekExerciseFill');
+      const textEl = document.getElementById('weekExerciseText');
+      const rangeEl= document.getElementById('weekSummary');
+
+      if(fillEl) fillEl.style.width = percent + '%';
+      if(textEl){
+        textEl.textContent =
+          weekGoal > 0
+            ? `이번 주 운동일 ${weekExerciseDays}일 / 목표 ${weekGoal}일`
+            : `이번 주 운동 목표가 설정되지 않았습니다.`;
+      }
+
+      const startLabel = monday.toISOString().slice(5,10).replace('-','/');
+      const endLabel   = sunday.toISOString().slice(5,10).replace('-','/');
+      if(rangeEl){
+        rangeEl.textContent = `${startLabel} ~ ${endLabel} 기준`;
+      }
+    }
 
     function renderExerciseList(){
-      if(state.exercises.length===0){exerciseList.textContent='아직 기록이 없습니다.';return;}
+      if(!exerciseList) return;
+      if(state.exercises.length===0){
+        exerciseList.textContent='아직 기록이 없습니다.';
+        return;
+      }
       exerciseList.innerHTML='';
       for(let e of state.exercises){
+        const safeName = escapeHtml(e.name);
+        const safeMemo = escapeHtml(e.memo || '');
+        const safeParts = e.parts.length ? e.parts.map(escapeHtml).join(', ') : '부위 미지정';
         const div=document.createElement('div');
         div.className='entry';
-        div.innerHTML='<strong>'+e.name+'</strong><div class="meta">'+e.date+' · '+(e.parts.length?e.parts.join(', '):'부위 미지정')+'</div>'+(e.memo?'<div>'+e.memo+'</div>':'');
+        div.innerHTML =
+          '<strong>'+safeName+'</strong>'+
+          '<div class="meta">'+e.date+' · '+safeParts+'</div>'+
+          (e.memo?'<div>'+safeMemo+'</div>':'');
         exerciseList.appendChild(div);
       }
     }
+
     function renderDietList(){
-      if(state.diets.length===0){dietList.textContent='아직 기록이 없습니다.';return;}
+      if(!dietList) return;
+      if(state.diets.length===0){
+        dietList.textContent='아직 기록이 없습니다.';
+        return;
+      }
       dietList.innerHTML='';
       for(let d of state.diets){
+        const safeMeal = escapeHtml(d.meal);
+        const safeMemo = escapeHtml(d.memo || '');
         const div=document.createElement('div');
         div.className='entry';
-        div.innerHTML='<strong>['+d.meal+']</strong> '+d.date+(d.memo?'<div>'+d.memo+'</div>':'');
+        div.innerHTML =
+          '<strong>['+safeMeal+']</strong> '+d.date+
+          (d.memo?'<div>'+safeMemo+'</div>':'');
         dietList.appendChild(div);
       }
     }
 
-    // 월별 필터를 적용해 날짜별로 운동+식단 묶어 출력
+    function getLastDayOfMonth(year, month){
+      return new Date(year, month, 0).getDate();
+    }
+
     function renderCombined(){
-      const month = monthFilter.value; // 'YYYY-MM'
-      const byDate = {}; // { 'YYYY-MM-DD': {exercises:[], diets:[]} }
+      if(!monthFilter || !combinedList) return;
+      const monthVal = monthFilter.value;
+      if(!monthVal){
+        combinedList.textContent = '먼저 월을 선택하세요.';
+        return;
+      }
+
+      const [yearStr, monthStr] = monthVal.split('-');
+      const year     = parseInt(yearStr, 10);
+      const monthNum = parseInt(monthStr, 10);
+      const lastDay  = getLastDayOfMonth(year, monthNum);
+
+      const weekVal  = parseInt(weekFilter.value, 10);
+      let startDay = 1;
+      let endDay   = lastDay;
+
+      if(weekVal > 0){
+        startDay = 1 + (weekVal - 1) * 7;
+        endDay   = weekVal * 7;
+        if(startDay > lastDay){
+          combinedList.textContent = '선택한 주차가 이 달의 날짜 범위를 벗어났습니다.';
+          return;
+        }
+        if(endDay > lastDay) endDay = lastDay;
+        monthHint.textContent = year+'년 '+monthNum+'월 '+weekVal+'주차 ('+startDay+'일 ~ '+endDay+'일) 기록입니다.';
+      }else{
+        monthHint.textContent = year+'년 '+monthNum+'월 전체 기록입니다.';
+      }
+
+      const byDate = {};
 
       for(let e of state.exercises){
-        if(!e.date.startsWith(month)) continue;
+        if(!e.date.startsWith(monthVal)) continue;
+        if(weekVal > 0){
+          const day = parseInt(e.date.slice(8,10),10);
+          if(day < startDay || day > endDay) continue;
+        }
         if(!byDate[e.date]) byDate[e.date] = {exercises:[], diets:[]};
         byDate[e.date].exercises.push(e);
       }
+
       for(let d of state.diets){
-        if(!d.date.startsWith(month)) continue;
+        if(!d.date.startsWith(monthVal)) continue;
+        if(weekVal > 0){
+          const day = parseInt(d.date.slice(8,10),10);
+          if(day < startDay || day > endDay) continue;
+        }
         if(!byDate[d.date]) byDate[d.date] = {exercises:[], diets:[]};
         byDate[d.date].diets.push(d);
       }
 
-      const dates = Object.keys(byDate).sort((a,b)=> b.localeCompare(a)); // 최신 날짜 우선
-      if(dates.length===0){combinedList.textContent='선택한 월에는 기록이 없습니다.';return;}
+      const dates = Object.keys(byDate).sort((a,b)=> a.localeCompare(b));
+
+      if(dates.length===0){
+        combinedList.textContent = '선택한 범위에는 기록이 없습니다.';
+        return;
+      }
 
       combinedList.innerHTML='';
       for(let dt of dates){
@@ -221,72 +614,355 @@
         block.appendChild(title);
 
         const data = byDate[dt];
+        const dayGrid = document.createElement('div');
+        dayGrid.className = 'day-grid';
+
+        const colExercise = document.createElement('div');
+        colExercise.className = 'day-col';
+        const headEx = document.createElement('div');
+        headEx.className = 'subhead';
+        headEx.textContent = '운동';
+        colExercise.appendChild(headEx);
 
         if(data.exercises.length){
-          const sh = document.createElement('div');
-          sh.className = 'subhead';
-          sh.textContent = '운동';
-          block.appendChild(sh);
-
           for(let e of data.exercises){
+            const safeName = escapeHtml(e.name);
+            const safeMemo = escapeHtml(e.memo || '');
+            const safeParts = e.parts.length ? e.parts.map(escapeHtml).join(', ') : '부위 미지정';
             const row = document.createElement('div');
             row.className='entry';
             row.innerHTML =
-              '<strong>'+e.name+'</strong>' +
-              '<div class="meta">'+ (e.parts.length? e.parts.join(', ') : '부위 미지정') +'</div>' +
-              (e.memo ? '<div style="margin-top:6px">'+ e.memo.replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\\n','<br>') +'</div>' : '');
-            block.appendChild(row);
+              '<strong>'+safeName+'</strong>' +
+              '<div class="meta">'+ safeParts +'</div>' +
+              (e.memo ? '<div style="margin-top:4px">'+
+                         safeMemo.replace(/\n/g,'<br>') +
+                        '</div>' : '');
+            colExercise.appendChild(row);
           }
+        }else{
+          const empty = document.createElement('div');
+          empty.className = 'meta';
+          empty.textContent = '운동 기록 없음';
+          colExercise.appendChild(empty);
         }
+
+        const colDiet = document.createElement('div');
+        colDiet.className = 'day-col';
+        const headDiet = document.createElement('div');
+        headDiet.className = 'subhead';
+        headDiet.textContent = '식단';
+        colDiet.appendChild(headDiet);
 
         if(data.diets.length){
-          const sh2 = document.createElement('div');
-          sh2.className = 'subhead';
-          sh2.textContent = '식단';
-          block.appendChild(sh2);
-
           for(let d of data.diets){
+            const safeMeal = escapeHtml(d.meal);
+            const safeMemo = escapeHtml(d.memo || '');
             const row = document.createElement('div');
             row.className='entry';
             row.innerHTML =
-              '<strong>['+d.meal+']</strong>' +
-              (d.memo ? '<div style="margin-top:6px">'+ d.memo.replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\\n','<br>') +'</div>' : '');
-            block.appendChild(row);
+              '<strong>['+safeMeal+']</strong>' +
+              (d.memo ? '<div style="margin-top:4px">'+
+                         safeMemo.replace(/\n/g,'<br>') +
+                        '</div>' : '');
+            colDiet.appendChild(row);
           }
+        }else{
+          const empty = document.createElement('div');
+          empty.className = 'meta';
+          empty.textContent = '식단 기록 없음';
+          colDiet.appendChild(empty);
         }
 
+        dayGrid.appendChild(colExercise);
+        dayGrid.appendChild(colDiet);
+        block.appendChild(dayGrid);
         combinedList.appendChild(block);
       }
     }
 
-    addExercise.addEventListener('click',()=>{
-      const date=exerciseDate.value||today;
-      const name=(exerciseName.value||'').trim();
-      const memo=(exerciseMemo.value||'').trim();
-      if(!name){alert('운동 이름을 입력하세요.');return;}
-      const parts=Array.from(document.querySelectorAll('.chip.active')).map(x=>x.textContent);
-      state.exercises.push({date,name,memo,parts});
-      renderExerciseList();
-      exerciseName.value='';exerciseMemo.value='';
-      renderCombined(); // 월별+날짜별 묶음 갱신
-    });
+    function renderCalendar(){
+      if(!calendarMonth || !calendarGrid) return;
 
-    addDiet.addEventListener('click',()=>{
-      const date=dietDate.value||today;
-      const meal=mealType.value;
-      const memo=(dietMemo.value||'').trim();
-      if(!memo){alert('식단 내용을 입력하세요.');return;}
-      state.diets.push({date,meal,memo});
-      renderDietList();
-      dietMemo.value='';
-      renderCombined(); // 월별+날짜별 묶음 갱신
-    });
+      const val = calendarMonth.value || thisMonth;
+      calendarMonth.value = val;
 
-    applyMonth.addEventListener('click', renderCombined);
-    monthFilter.addEventListener('change', renderCombined);
+      const [yStr, mStr] = val.split('-');
+      const y = parseInt(yStr,10);
+      const m = parseInt(mStr,10);
+      const first = new Date(y, m-1, 1);
+      const firstWeekday = first.getDay(); // 일요일=0
+      const lastDay = getLastDayOfMonth(y, m);
 
-    // 초기 렌더
-    renderCombined();
+      const logs = new Set(
+        [...state.exercises, ...state.diets]
+          .filter(x=>x.date.startsWith(val))
+          .map(x=>parseInt(x.date.slice(8,10),10))
+      );
+
+      calendarGrid.innerHTML = '';
+
+      // 달력 머리: 일요일부터
+      const weekdays = ['일','월','화','수','목','금','토'];
+      for(const w of weekdays){
+        const head = document.createElement('div');
+        head.className='cal-head';
+        head.textContent=w;
+        calendarGrid.appendChild(head);
+      }
+
+      // 첫 주 앞쪽 빈 칸
+      for(let i=0;i<firstWeekday;i++){
+        const empty=document.createElement('div');
+        empty.className='cal-cell cal-empty';
+        calendarGrid.appendChild(empty);
+      }
+
+      // 날짜 채우기
+      for(let d=1; d<=lastDay; d++){
+        const cell=document.createElement('button');
+        cell.type='button';
+        cell.className='cal-cell';
+        cell.textContent=d;
+        if(logs.has(d)) cell.classList.add('has-log');
+        calendarGrid.appendChild(cell);
+      }
+    }
+
+    // 이벤트: 운동/식단 추가
+    if(addExercise){
+      addExercise.addEventListener('click',()=>{
+        const date=exerciseDate.value||today;
+        const name=(exerciseName.value||'').trim();
+        const memo=(exerciseMemo.value||'').trim();
+        if(!name){
+          alert('운동 이름을 입력하세요.');
+          return;
+        }
+        const parts=Array.from(document.querySelectorAll('.chip.active')).map(x=>x.textContent);
+        state.exercises.push({date,name,memo,parts});
+        saveState();
+        renderExerciseList();
+        exerciseName.value='';
+        exerciseMemo.value='';
+        updateSummary();
+        renderCombined();
+        renderCalendar();
+      });
+    }
+
+    if(addDiet){
+      addDiet.addEventListener('click',()=>{
+        const date=dietDate.value||today;
+        const meal=mealType.value;
+        const memo=(dietMemo.value||'').trim();
+        if(!memo){
+          alert('식단 내용을 입력하세요.');
+          return;
+        }
+        state.diets.push({date,meal,memo});
+        saveState();
+        renderDietList();
+        dietMemo.value='';
+        updateSummary();
+        renderCombined();
+        renderCalendar();
+      });
+    }
+
+    if(applyRange){
+      applyRange.addEventListener('click', renderCombined);
+      monthFilter.addEventListener('change', ()=>{
+        calendarMonth.value = monthFilter.value;
+        renderCombined();
+        renderCalendar();
+      });
+      weekFilter.addEventListener('change', renderCombined);
+    }
+
+    if(calendarMonth){
+      calendarMonth.addEventListener('change', ()=>{
+        monthFilter.value = calendarMonth.value;
+        renderCalendar();
+        renderCombined();
+      });
+    }
+
+    // 목표 값이 바뀔 때마다 요약 업데이트
+    if(weekGoalInput){
+      weekGoalInput.addEventListener('input', updateSummary);
+      proteinTarget.addEventListener('input', updateSummary);
+      fatTarget.addEventListener('input', updateSummary);
+      carbTarget.addEventListener('input', updateSummary);
+    }
+
+    // 보기 모드별로 섹션 순서/표시 조정
+    function setView(mode){
+      btnViewAll.classList.remove('active');
+      btnViewExercise.classList.remove('active');
+      btnViewDiet.classList.remove('active');
+
+      if(mode === 'all'){
+        sectionSummary.style.display      = 'block';
+        sectionCalendar.style.display     = 'block';
+        sectionCombinedLog.style.display  = 'block';
+
+        sectionExerciseForm.style.display = 'none';
+        sectionExerciseLog.style.display  = 'none';
+        sectionDietForm.style.display     = 'none';
+        sectionDietLog.style.display      = 'none';
+
+        sectionSummary.style.order      = 1;
+        sectionCalendar.style.order     = 2;
+        sectionCombinedLog.style.order  = 3;
+        sectionExerciseForm.style.order = 4;
+        sectionExerciseLog.style.order  = 5;
+        sectionDietForm.style.order     = 6;
+        sectionDietLog.style.order      = 7;
+
+        btnViewAll.classList.add('active');
+      }else if(mode === 'exercise'){
+        sectionSummary.style.display      = 'block';
+        sectionExerciseForm.style.display = 'block';
+        sectionCalendar.style.display     = 'block';
+        sectionExerciseLog.style.display  = 'block';
+
+        sectionCombinedLog.style.display  = 'none';
+        sectionDietForm.style.display     = 'none';
+        sectionDietLog.style.display      = 'none';
+
+        sectionSummary.style.order      = 1;
+        sectionExerciseForm.style.order = 2;
+        sectionCalendar.style.order     = 3;
+        sectionExerciseLog.style.order  = 4;
+        sectionCombinedLog.style.order  = 5;
+        sectionDietForm.style.order     = 6;
+        sectionDietLog.style.order      = 7;
+
+        btnViewExercise.classList.add('active');
+      }else if(mode === 'diet'){
+        sectionSummary.style.display      = 'block';
+        sectionDietForm.style.display     = 'block';
+        sectionCalendar.style.display     = 'block';
+        sectionDietLog.style.display      = 'block';
+
+        sectionExerciseForm.style.display = 'none';
+        sectionExerciseLog.style.display  = 'none';
+        sectionCombinedLog.style.display  = 'none';
+
+        sectionSummary.style.order      = 1;
+        sectionDietForm.style.order     = 2;
+        sectionCalendar.style.order     = 3;
+        sectionDietLog.style.order      = 4;
+        sectionExerciseForm.style.order  = 5;
+        sectionExerciseLog.style.order   = 6;
+        sectionCombinedLog.style.order   = 7;
+
+        btnViewDiet.classList.add('active');
+      }
+    }
+
+    if(btnViewAll){
+      btnViewAll.addEventListener('click', ()=>setView('all'));
+      btnViewExercise.addEventListener('click', ()=>setView('exercise'));
+      btnViewDiet.addEventListener('click', ()=>setView('diet'));
+    }
+
+    // 로그인 / 회원가입 이벤트
+    if(doLogin){
+      doLogin.addEventListener('click', ()=>{
+        const u = (loginUsername.value || '').trim();
+        const p = loginPassword.value || '';
+        if(!u || !p){
+          alert('아이디와 비밀번호를 모두 입력하세요.');
+          return;
+        }
+
+        if(isLoginLocked(u)){
+          alert('로그인 시도가 너무 많습니다. 5분 후 다시 시도하세요.');
+          return;
+        }
+
+        const users = getUsers();
+        if(!users[u] || users[u].password !== p){
+          const info = registerLoginFail(u);
+          if(info.count >= 5){
+            alert('로그인 실패 횟수가 많습니다. 5분 후 다시 시도하세요.');
+          }else{
+            alert('아이디 또는 비밀번호가 올바르지 않습니다.');
+          }
+          return;
+        }
+
+        clearLoginFail(u);
+        setCurrentUser(u);
+        loginPassword.value = '';
+      });
+    }
+
+    if(doSignup){
+      doSignup.addEventListener('click', ()=>{
+        const u = (signupUsername.value || '').trim();
+        const p1 = signupPassword.value || '';
+        const p2 = signupPassword2.value || '';
+        if(!u || !p1 || !p2){
+          alert('아이디와 비밀번호를 모두 입력하세요.');
+          return;
+        }
+        if(p1 !== p2){
+          alert('비밀번호가 서로 다릅니다.');
+          return;
+        }
+
+        // 간단한 입력값 검증
+        if(u.length < 3 || u.length > 20){
+          alert('아이디는 3~20자로 입력하세요.');
+          return;
+        }
+        if(!/^[a-zA-Z0-9_]+$/.test(u)){
+          alert('아이디는 영문, 숫자, 밑줄(_)만 사용할 수 있습니다.');
+          return;
+        }
+        if(p1.length < 8){
+          alert('비밀번호는 8자 이상으로 설정하세요.');
+          return;
+        }
+
+        const users = getUsers();
+        if(users[u]){
+          alert('이미 존재하는 아이디입니다.');
+          return;
+        }
+        users[u] = {password:p1};
+        setUsers(users);
+        alert('회원가입이 완료되었습니다. 자동으로 로그인합니다.');
+        signupPassword.value = '';
+        signupPassword2.value = '';
+        setCurrentUser(u);
+      });
+    }
+
+    if(btnLogout){
+      btnLogout.addEventListener('click', ()=>{
+        if(!confirm('로그아웃하시겠습니까?')) return;
+        setCurrentUser(null);
+      });
+    }
+
+    // 초기 로그인 상태 확인
+    (function initAuth(){
+      const savedUser = localStorage.getItem('tn_current_user');
+      if(savedUser){
+        const users = getUsers();
+        if(users[savedUser]){
+          currentUser = savedUser;
+        }
+      }
+      updateLoginUI();
+      // 기본 보기 모드
+      if(currentUser){
+        setView('exercise');
+      }
+    })();
   </script>
 </body>
 </html>
